@@ -310,6 +310,8 @@ public class Utility {
             DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
 			StringBuffer requestBody = new StringBuffer();
 			
+			requestBody.append("{\"eppn\":\""+eppn+"\", \"mail\":\""+mail+"\", \"cn\":\""+cn+"\"}");
+			
 			wr.writeBytes(requestBody.toString());
 			wr.flush();
 			wr.close();

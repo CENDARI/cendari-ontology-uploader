@@ -1,0 +1,336 @@
+package org.cendari.ontology.upload;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.List;
+import java.util.ListIterator;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.cendari.ontology.utility.Utility;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+public enum FileUploadHandler {
+	INSTANCE;
+	public static FileUploadHandler getInstance() {
+		return INSTANCE;
+	}
+	private void setSessionVariable(HttpServletRequest request, String name, String value) {
+		HttpSession session = request.getSession(true);
+		session.setAttribute(name, value);
+	}
+	
+	void processUploadRequest(HttpServletRequest request, HttpServletResponse response, String fileType) throws ServletException, IOException {
+		if (!ServletFileUpload.isMultipartContent(request)) {
+	        throw new IllegalArgumentException("Request is not multipart, please 'multipart/form-data' enctype for your form.");
+	    }
+		
+		/*HttpSession session = request.getSession(true);
+		System.out.println("isDatasetCreated: "+session.getAttribute("isDatasetCreated"));
+		System.out.println("datasetId: "+session.getAttribute("datasetId"));
+		if ((session.getAttribute("isDatasetCreated") == null) || (session.getAttribute("isDatasetCreated").toString() == "false")) {
+			if ((session.getAttribute("datasetId") == null)) {
+				createDatasetInCKAN(request);
+			}
+		}*/
+		
+		String fileDescription = fileType;
+		
+	    ServletFileUpload uploadHandler = new ServletFileUpload(new DiskFileItemFactory());
+	    PrintWriter writer = response.getWriter();
+	    response.setContentType("application/json");
+	    JSONObject finalObj = new JSONObject();
+	    JSONArray list = new JSONArray();
+	    try {
+	        List<FileItem> items = uploadHandler.parseRequest(request);
+	        //uploadFilesToCKAN(request, items);
+	        for (FileItem item : items) {
+	            if (!item.isFormField()) {
+	            	String filepath = request.getServletContext().getRealPath("/")+"/upload/";
+	            	
+	            	File directory = new File(filepath);
+	            	boolean isDirectoryExisted = false;
+	            	if (!directory.exists()) {
+	            		if (directory.mkdir()) {
+	            			System.out.println("Directory is created!");
+	            			isDirectoryExisted = true;
+		            	} else {
+	            			System.out.println("Failed to create directory!");
+	            		}
+	            	}
+	            	else {
+	            		isDirectoryExisted = true;
+	            	}
+	            	File file = null;
+	            	if (isDirectoryExisted) {
+	            		file = new File(filepath, item.getName());
+		           	 	item.write(file);
+		           	 	
+		           	 	String status = uploadFileToCKAN(request, file, fileDescription);
+		           	 	
+		           	 	JSONObject obj = new JSONObject();
+		           	 	if (status.contains("201")) {
+		           	 		obj.put("name", item.getName());
+			                obj.put("size", item.getSize());
+			                obj.put("url", filepath + item.getName());
+			                //obj.put("thumbnailUrl", filepath + item.getName());
+			                obj.put("deleteUrl", filepath + item.getName());
+			                obj.put("deleteType", "DELETE");
+		           	 	}
+		           	 	else {
+		           	 		obj.put("error", status);
+		           	 	}
+		                list.add(obj);
+		            }
+	            	if (file.exists()) {
+	            		file.delete();
+	            	}
+	            }
+	        }
+	        finalObj.put("files", list);
+	        
+	    } catch (FileUploadException e) {
+	    	throw new RuntimeException(e);
+	    } catch (Exception e) {
+	    	throw new RuntimeException(e);
+	    } finally {
+	    	writer.write(finalObj.toString());
+	        writer.close();
+	    }
+	}
+			
+	/*void createDatasetInCKAN(HttpServletRequest request) {
+		HttpSession session = request.getSession(true);
+		String datasetTitle = session.getAttribute("datasetTitle").toString();
+		String datasetDescription = session.getAttribute("datasetDescription").toString();
+		String dataspaceId = session.getAttribute("dataspaceId").toString();
+		String authorization = session.getAttribute("authorization").toString();
+		try {
+			boolean isDatasetCreated = false;
+			int number = 1;
+            do {
+				
+	            
+            	URL obj = new URL("http://localhost:42042/v1/sets");
+        		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+        		//add reuqest header
+        		con.setRequestMethod("POST");
+        		con.setRequestProperty("User-Agent", "Mozilla/5.0");
+        		con.setRequestProperty("Content-Type","application/json");
+        		con.setRequestProperty ("Authorization", authorization);
+        		
+        		JSONObject urlParameters = new JSONObject();
+        		urlParameters.put("name", datasetTitle+number);
+        		urlParameters.put("title", datasetTitle+number);
+        		urlParameters.put("description", datasetDescription);
+        		urlParameters.put("dataspaceId", dataspaceId);
+        		
+        		// Send post request
+        		con.setDoOutput(true);
+        		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        		wr.writeBytes(urlParameters.toString());
+        		wr.flush();
+        		wr.close();
+        		
+        		int responseCode = con.getResponseCode();
+        		System.out.println("Response Code : " + responseCode);
+        		
+        		if (responseCode == 201) {
+        			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+		            String line = null;
+		            while ((line = in.readLine()) != null) {
+		            	System.out.println(line);
+		            	//appendLogFile(request.getServletContext().getRealPath("/")+"/upload/log.txt", line);
+		            	if (line.contains("active")) {
+		            		isDatasetCreated = true;
+		            	}
+		            	else if (line.contains("url")){
+		            		String url = line.substring(line.indexOf("http"), line.lastIndexOf("\""));
+		            		System.out.println("Dataset URL: "+url);
+		            		setSessionVariable(request, "datasetURL", url);
+		            		
+		            		String datasetId = line.substring(line.lastIndexOf("/")+1, line.lastIndexOf("\""));
+		            		System.out.println("Dataset name: "+datasetId);
+		            		setSessionVariable(request, "datasetId", datasetId);
+		            	}
+		            }
+        		}
+	            if (isDatasetCreated == false) {
+	            	number++;
+	            }
+            }
+            while (isDatasetCreated == false);
+            setSessionVariable(request, "isDatasetCreated", "true");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+	}*/
+	
+	String uploadFileToCKAN (HttpServletRequest request, File file, String description) {
+		String status = "";
+		String sessionKey = "";
+		if (Utility.getSessionVariable(request, "sessionKey") != null) {
+			sessionKey = Utility.getSessionVariable(request, "sessionKey").toString();
+		}
+		
+		String datasetId = "";
+		if (Utility.getSessionVariable(request, "datasetId") != null) {
+			datasetId = Utility.getSessionVariable(request, "datasetId").toString();
+		}
+		
+		File uploadFile = file;
+		System.out.println("Uploading file "+file.getName());
+		System.out.println("sessionKey: "+sessionKey);
+		System.out.println("datasetId: "+datasetId);
+		
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		
+		HttpPost httpPost = new HttpPost("http://localhost:42042/v1/resources");
+		httpPost.addHeader("Authorization", sessionKey);
+				
+		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+		builder.addTextBody("name", file.getName());
+		builder.addTextBody("format", getMimeType(file));
+		builder.addTextBody("description", description);
+	    builder.addTextBody("setId", datasetId);
+	    //builder.addTextBody("password", "pass");
+	    builder.addBinaryBody("file", uploadFile,
+	      ContentType.APPLICATION_OCTET_STREAM, "xml");
+	 
+	    HttpEntity multipart = builder.build();
+	    httpPost.setEntity(multipart);
+	 
+	    CloseableHttpResponse response;
+		try {
+			response = httpclient.execute(httpPost);
+			status = response.getStatusLine().toString();
+			System.out.println("status: "+status);
+		    
+			HttpEntity entity = response.getEntity();
+	        System.out.println(entity.toString());
+	            //return entity != null ? EntityUtils.toString(entity) : null;
+	        
+		    httpclient.close();
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			return status;
+		}
+	}
+	
+	private void uploadFilesToCKAN (HttpServletRequest request, List<FileItem> fileList) {
+		//List<FileItem> items = fileList;
+		System.out.println("Uploading files.");
+		ListIterator<FileItem> it = fileList.listIterator();
+		
+		if (it.hasNext()) {
+			BufferedReader in;
+			try {
+				do {
+					FileItem fileItem = it.next();
+					File file = new File(request.getServletContext().getRealPath("/")+"/imgs/", fileItem.getName());
+					System.out.println("Uploading file "+fileItem.getName());
+					Process p = Runtime.getRuntime().exec("curl -H 'Authorization: c821daf7-9439-4dcd-a203-20a57eafdb66' -F 'file=@"+file.getAbsolutePath()+"'  -F 'name="+file.getName()+"' -F 'format="+getMimeType(file)+"'  -F 'description=Test'  -F 'setId=b12c4a48-70c7-465c-a55e-9ffd295f1f50' http://localhost:42042/v1/resources");
+					in = new BufferedReader(
+		                    new InputStreamReader(p.getInputStream()));
+				}
+	            while (((in.readLine()) != null) && (it.hasNext()));
+	            
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+		}
+	}
+	
+	
+    	 
+    private String getMimeType(File file) {
+        String mimetype = "";
+        if (file.exists()) {
+            if (getSuffix(file.getName()).equalsIgnoreCase("png")) {
+                mimetype = "image/png";
+            }else if(getSuffix(file.getName()).equalsIgnoreCase("jpg")){
+                mimetype = "image/jpg";
+            }else if(getSuffix(file.getName()).equalsIgnoreCase("jpeg")){
+                mimetype = "image/jpeg";
+            }else if(getSuffix(file.getName()).equalsIgnoreCase("gif")){
+                mimetype = "image/gif";
+            }else {
+                javax.activation.MimetypesFileTypeMap mtMap = new javax.activation.MimetypesFileTypeMap();
+                mimetype  = mtMap.getContentType(file);
+            }
+        }
+        return mimetype;
+    }
+
+    private String getSuffix(String filename) {
+        String suffix = "";
+        int pos = filename.lastIndexOf('.');
+        if (pos > 0 && pos < filename.length() - 1) {
+            suffix = filename.substring(pos + 1);
+        }
+        return suffix;
+    }
+    
+    private void createLogFile(String fileName) {
+    	File file =new File(fileName);
+		
+		//if file doesnt exists, then create it
+		if(!file.exists()){
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+    }
+    
+    private void appendLogFile(String fileName, String content) {
+    	File file =new File(fileName);
+		
+		//if file doesnt exists, then create it
+		if(!file.exists()){
+			try {
+				file.createNewFile();
+				FileWriter fileWritter = new FileWriter(file.getName(),true);
+		        BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
+		        bufferWritter.write(content);
+		        bufferWritter.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+    }
+}

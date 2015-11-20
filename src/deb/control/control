@@ -1,0 +1,8 @@
+Package: cendari-[[artifactId]]
+Version: [[version]]
+Section: misc
+Priority: low
+Architecture: all
+Description: [[description]]
+Maintainer: info@cendari.eu
+Depends: tomcat7

@@ -81,13 +81,13 @@
                         <src>${project.build.directory}/${project.build.finalName}</src>
                         <mapper>
                           <type>perm</type>
-                          <prefix>/usr/share/${artifactId}/web</prefix>
+                          <prefix>/usr/share/${project.artifactId}/web</prefix>
                         </mapper>
                       </data>
                       <data>
                         <type>file</type>
                         <src>${project.basedir}/src/deb/data/deployment-descriptor.xml</src>
-                        <dst>/etc/tomcat7/Catalina/localhost/${artifactId}.xml</dst>
+                        <dst>/etc/tomcat7/Catalina/localhost/${project.artifactId}.xml</dst>
                       </data>
                     </dataSet>
                   </configuration>

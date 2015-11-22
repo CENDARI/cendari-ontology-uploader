@@ -72,7 +72,8 @@ public enum FileUploadHandler {
 	        //uploadFilesToCKAN(request, items);
 	        for (FileItem item : items) {
 	        	if (!item.isFormField()) {
-	            	String filePath = request.getServletContext().getRealPath("/")+"/upload/";
+	            	//String filePath = request.getServletContext().getRealPath("/")+"/upload/";
+	            	String filePath = request.getServletContext().getRealPath("/");
 	            	File directory = new File(filePath);
 	            	boolean isDirectoryExisted = false;
 	            	if (!directory.exists()) {

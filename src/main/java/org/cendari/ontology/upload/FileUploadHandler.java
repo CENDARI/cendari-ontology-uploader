@@ -77,7 +77,7 @@ public enum FileUploadHandler {
 	            	//System.out.println("filePath: "+filePath);
 	            	//filePath = request.getSession().getServletContext().getRealPath("/");
 	            	//System.out.println("filePath: "+filePath);
-	            	filePath = "/var/lib/ontologyuploader/";
+	            	filePath = "/test/";
 	            	File directory = new File(filePath);
 	            	boolean isDirectoryExisted = false;
 	            	if (!directory.exists()) {

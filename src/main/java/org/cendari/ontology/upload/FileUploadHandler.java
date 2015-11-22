@@ -79,8 +79,6 @@ public enum FileUploadHandler {
 	            	//System.out.println("filePath: "+filePath);
 	            	filePath = "/test/";
 	            	
-	            	filePath = System.getProperty("user.home");
-	            	
 	        		File directory = new File(filePath);
 	            	boolean isDirectoryExisted = false;
 	            	if (!directory.exists()) {

@@ -56,11 +56,11 @@ public class RelationshipFileUpload extends HttpServlet {
 	}
 	
 	private File generateRelationshipFile(HttpServletRequest request, ArrayList<JSONObject> jsonObjectList) throws IOException {
-		File homedir = new File(System.getProperty("user.home"));
-		File relationshipFile = new File(homedir, "/relationship.xml");
-		//File relationshipFile = new File("/test/relationship.xml");
+		File relationshipFile = new File("/test/relationship.xml");
 		
-		FileWriter fw = new FileWriter(relationshipFile.getAbsolutePath());
+		//FileWriter fw = new FileWriter(relationshipFile.getAbsolutePath());
+		FileWriter fw = new FileWriter(relationshipFile);
+		
 		//System.out.println("relationshipFile.getAbsolutePath(): "+relationshipFile.getAbsolutePath());
 		BufferedWriter bw = new BufferedWriter(fw);
 		

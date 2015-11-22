@@ -185,9 +185,8 @@
         </div>
         <div class="panel-body">
             <ul>
-            	<li>A</li>
-            	<li>B</li>
-            	<li>C</li>
+            	<li>To view dataspaces, you may have to create a new account and/or a new dataspace from CKAN server https://repository.cendari.dariah.eu/ </li>
+            	<li>A dataspace created by other user is not be viewable if that dataspace is private.</li>
                 <!-- 
                 <li>The maximum file size for uploads in this demo is <strong>999 KB</strong> (default file size is unlimited).</li>
                 <li>Only image files (<strong>JPG, GIF, PNG</strong>) are allowed in this demo (by default there is no file type restriction).</li>

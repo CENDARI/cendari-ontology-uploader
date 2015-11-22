@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
@@ -15,14 +16,21 @@ import java.util.List;
 import java.util.ListIterator;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.FileItemIterator;
+import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -45,19 +53,11 @@ public enum FileUploadHandler {
 		session.setAttribute(name, value);
 	}
 	
-	void processUploadRequest(HttpServletRequest request, HttpServletResponse response, String fileType) throws ServletException, IOException {
+	void processUploadRequest(HttpServletRequest request, HttpServletResponse response, String fileType) throws IOException {
 		if (!ServletFileUpload.isMultipartContent(request)) {
 	        throw new IllegalArgumentException("Request is not multipart, please 'multipart/form-data' enctype for your form.");
 	    }
 		
-		/*HttpSession session = request.getSession(true);
-		System.out.println("isDatasetCreated: "+session.getAttribute("isDatasetCreated"));
-		System.out.println("datasetId: "+session.getAttribute("datasetId"));
-		if ((session.getAttribute("isDatasetCreated") == null) || (session.getAttribute("isDatasetCreated").toString() == "false")) {
-			if ((session.getAttribute("datasetId") == null)) {
-				createDatasetInCKAN(request);
-			}
-		}*/
 		
 		String fileDescription = fileType;
 		
@@ -67,13 +67,13 @@ public enum FileUploadHandler {
 	    JSONObject finalObj = new JSONObject();
 	    JSONArray list = new JSONArray();
 	    try {
+	    	//List<FileItem> items = null;
 	        List<FileItem> items = uploadHandler.parseRequest(request);
 	        //uploadFilesToCKAN(request, items);
 	        for (FileItem item : items) {
-	            if (!item.isFormField()) {
-	            	String filepath = request.getServletContext().getRealPath("/")+"/upload/";
-	            	
-	            	File directory = new File(filepath);
+	        	if (!item.isFormField()) {
+	            	String filePath = request.getServletContext().getRealPath("/")+"/upload/";
+	            	File directory = new File(filePath);
 	            	boolean isDirectoryExisted = false;
 	            	if (!directory.exists()) {
 	            		if (directory.mkdir()) {
@@ -88,7 +88,7 @@ public enum FileUploadHandler {
 	            	}
 	            	File file = null;
 	            	if (isDirectoryExisted) {
-	            		file = new File(filepath, item.getName());
+	            		file = new File(filePath, item.getName());
 		           	 	item.write(file);
 		           	 	
 		           	 	String status = uploadFileToCKAN(request, file, fileDescription);
@@ -97,9 +97,9 @@ public enum FileUploadHandler {
 		           	 	if (status.contains("201")) {
 		           	 		obj.put("name", item.getName());
 			                obj.put("size", item.getSize());
-			                obj.put("url", filepath + item.getName());
+			                obj.put("url", filePath + item.getName());
 			                //obj.put("thumbnailUrl", filepath + item.getName());
-			                obj.put("deleteUrl", filepath + item.getName());
+			                obj.put("deleteUrl", filePath + item.getName());
 			                obj.put("deleteType", "DELETE");
 		           	 	}
 		           	 	else {
@@ -123,75 +123,7 @@ public enum FileUploadHandler {
 	        writer.close();
 	    }
 	}
-			
-	/*void createDatasetInCKAN(HttpServletRequest request) {
-		HttpSession session = request.getSession(true);
-		String datasetTitle = session.getAttribute("datasetTitle").toString();
-		String datasetDescription = session.getAttribute("datasetDescription").toString();
-		String dataspaceId = session.getAttribute("dataspaceId").toString();
-		String authorization = session.getAttribute("authorization").toString();
-		try {
-			boolean isDatasetCreated = false;
-			int number = 1;
-            do {
-				
-	            
-            	URL obj = new URL("http://localhost:42042/v1/sets");
-        		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
-        		//add reuqest header
-        		con.setRequestMethod("POST");
-        		con.setRequestProperty("User-Agent", "Mozilla/5.0");
-        		con.setRequestProperty("Content-Type","application/json");
-        		con.setRequestProperty ("Authorization", authorization);
-        		
-        		JSONObject urlParameters = new JSONObject();
-        		urlParameters.put("name", datasetTitle+number);
-        		urlParameters.put("title", datasetTitle+number);
-        		urlParameters.put("description", datasetDescription);
-        		urlParameters.put("dataspaceId", dataspaceId);
-        		
-        		// Send post request
-        		con.setDoOutput(true);
-        		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-        		wr.writeBytes(urlParameters.toString());
-        		wr.flush();
-        		wr.close();
-        		
-        		int responseCode = con.getResponseCode();
-        		System.out.println("Response Code : " + responseCode);
-        		
-        		if (responseCode == 201) {
-        			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-		            String line = null;
-		            while ((line = in.readLine()) != null) {
-		            	System.out.println(line);
-		            	//appendLogFile(request.getServletContext().getRealPath("/")+"/upload/log.txt", line);
-		            	if (line.contains("active")) {
-		            		isDatasetCreated = true;
-		            	}
-		            	else if (line.contains("url")){
-		            		String url = line.substring(line.indexOf("http"), line.lastIndexOf("\""));
-		            		System.out.println("Dataset URL: "+url);
-		            		setSessionVariable(request, "datasetURL", url);
-		            		
-		            		String datasetId = line.substring(line.lastIndexOf("/")+1, line.lastIndexOf("\""));
-		            		System.out.println("Dataset name: "+datasetId);
-		            		setSessionVariable(request, "datasetId", datasetId);
-		            	}
-		            }
-        		}
-	            if (isDatasetCreated == false) {
-	            	number++;
-	            }
-            }
-            while (isDatasetCreated == false);
-            setSessionVariable(request, "isDatasetCreated", "true");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-	}*/
-	
 	String uploadFileToCKAN (HttpServletRequest request, File file, String description) {
 		String status = "";
 		String sessionKey = "";

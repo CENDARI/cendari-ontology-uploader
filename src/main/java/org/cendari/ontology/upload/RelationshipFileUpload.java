@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.cendari.ontology.utility.NextStep;
 import org.cendari.ontology.utility.Utility;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -33,7 +34,8 @@ public class RelationshipFileUpload extends HttpServlet {
 		deleteRelationshipFiles(request, jsonObjectList);
 		File relationshipFile = generateRelationshipFile(jsonObjectList);
 		FileUploadHandler.INSTANCE.uploadFileToCKAN(request, relationshipFile, "Relationship File");
-		response.sendRedirect(request.getContextPath() + "/uploadfinished.jsp");
+		//response.sendRedirect(request.getContextPath() + "/uploadfinished.jsp");
+		NextStep.goToNextPage(request, response, request.getContextPath()+"/uploadfinished.jsp");
 	}
 	
 	private String deleteRelationshipFiles(HttpServletRequest request, ArrayList<JSONObject> jsonObjectList) {

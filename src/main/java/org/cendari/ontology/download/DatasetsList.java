@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.cendari.ontology.utility.NextStep;
 import org.cendari.ontology.utility.Utility;
 
 public class DatasetsList extends HttpServlet {
@@ -29,6 +30,6 @@ public class DatasetsList extends HttpServlet {
 			Utility.setSessionVariable(request, "dataspaceTitle", request.getParameter("dataspaceTitle"));
 		}
 		
-		response.sendRedirect(request.getContextPath() + "/listdatasets.jsp");
+		NextStep.goToNextPage(request, response, request.getContextPath()+"/listdatasets.jsp");
 	}	
 }

@@ -298,8 +298,22 @@ public class Utility {
 	    }
 	}
 	
+	private static void setHttpsHeader(HttpServletRequest request) {
+		if (request.getHeader("referer") != null && request.getHeader("referer").contains("https:")) {
+			setSessionVariable(request, "isHttpsEnabled", "true");
+		}
+		else {
+			setSessionVariable(request, "isHttpsEnabled", "false");
+		}
+	}
+	
 	public static void getUserSessionInfo(HttpServletRequest request, String eppn, String mail, String cn) {
 		try {
+			
+			setSessionVariable(request, "host", request.getHeader("host"));
+			
+			setHttpsHeader(request);
+			
 			HttpSession session = request.getSession(true);
 			URL url = new URL ("http://localhost:42042/v1/session");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -311,7 +325,7 @@ public class Utility {
 			StringBuffer requestBody = new StringBuffer();
 			
 			requestBody.append("{\"eppn\":\""+eppn+"\", \"mail\":\""+mail+"\", \"cn\":\""+cn+"\"}");
-			
+						
 			wr.writeBytes(requestBody.toString());
 			wr.flush();
 			wr.close();
@@ -329,15 +343,15 @@ public class Utility {
 	        Object obj = JSONValue.parse(response);
         	JSONObject jsonObject = (JSONObject)obj;
         	if (jsonObject.get("username") != null) {
-        		System.out.println("username "+jsonObject.get("username"));
+        		System.out.println("username: "+jsonObject.get("username"));
         		setSessionVariable(request, "username", jsonObject.get("username").toString());
         	}
         	if (jsonObject.get("sessionKey") != null) {
-        		System.out.println("sessionKey "+jsonObject.get("sessionKey"));
+        		System.out.println("sessionKey: "+jsonObject.get("sessionKey"));
         		setSessionVariable(request, "sessionKey", jsonObject.get("sessionKey").toString());
         	}
         	if (jsonObject.get("sysadmin") != null) {
-        		System.out.println("sysadmin "+jsonObject.get("sysadmin"));
+        		System.out.println("sysadmin: "+jsonObject.get("sysadmin"));
         		setSessionVariable(request, "sysadmin", jsonObject.get("sysadmin").toString());
         	}
         } catch (IOException e) {

@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.cendari.ontology.utility.NextStep;
 import org.cendari.ontology.utility.Utility;
 
 public class ResourcesList extends HttpServlet {
@@ -34,6 +35,7 @@ public class ResourcesList extends HttpServlet {
 		if (request.getParameter("resources") != null) {
 			Utility.setSessionVariable(request, "resources", request.getParameter("resources"));
 		}
-		response.sendRedirect(request.getContextPath() + "/listresources.jsp");
+		
+		NextStep.goToNextPage(request, response, request.getContextPath()+"/listresources.jsp");		
 	}
 }

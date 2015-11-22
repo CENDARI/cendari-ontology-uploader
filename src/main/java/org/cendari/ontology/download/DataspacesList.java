@@ -13,10 +13,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.cendari.ontology.utility.NextStep;
+
 public class DataspacesList {
 	
 	// Method to handle GET method request.
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.sendRedirect(request.getContextPath() + "/listdataspaces.jsp");
+		NextStep.goToNextPage(request, response, request.getContextPath()+"/listdataspaces.jsp");
 	}
 }

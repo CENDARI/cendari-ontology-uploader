@@ -95,6 +95,11 @@ public enum FileUploadHandler {
 	            	File file = null;
 	            	if (isDirectoryExisted) {
 	            		file = new File(filePath, item.getName());
+	            		
+	            		if (!file.exists()) {
+	        				file.createNewFile();
+	        			}
+	            		
 		           	 	item.write(file);
 		           	 	
 		           	 	String status = uploadFileToCKAN(request, file, fileDescription);

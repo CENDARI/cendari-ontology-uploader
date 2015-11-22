@@ -74,6 +74,10 @@ public enum FileUploadHandler {
 	        	if (!item.isFormField()) {
 	            	//String filePath = request.getServletContext().getRealPath("/")+"/upload/";
 	            	String filePath = request.getServletContext().getRealPath("/");
+	            	//System.out.println("filePath: "+filePath);
+	            	//filePath = request.getSession().getServletContext().getRealPath("/");
+	            	//System.out.println("filePath: "+filePath);
+	            	filePath = "/var/lib/ontologyuploader/";
 	            	File directory = new File(filePath);
 	            	boolean isDirectoryExisted = false;
 	            	if (!directory.exists()) {
@@ -109,7 +113,7 @@ public enum FileUploadHandler {
 		                list.add(obj);
 		            }
 	            	if (file.exists()) {
-	            		file.delete();
+	            		//file.delete();
 	            	}
 	            }
 	        }

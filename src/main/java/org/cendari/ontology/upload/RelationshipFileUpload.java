@@ -32,7 +32,7 @@ public class RelationshipFileUpload extends HttpServlet {
 		Utility.getFilesMetadata(Utility.getSessionVariable(request, "sessionKey").toString(), page, jsonObjectList);
 		
 		deleteRelationshipFiles(request, jsonObjectList);
-		File relationshipFile = generateRelationshipFile(jsonObjectList);
+		File relationshipFile = generateRelationshipFile(request, jsonObjectList);
 		FileUploadHandler.INSTANCE.uploadFileToCKAN(request, relationshipFile, "Relationship File");
 		//response.sendRedirect(request.getContextPath() + "/uploadfinished.jsp");
 		NextStep.goToNextPage(request, response, request.getContextPath()+"/uploadfinished.jsp");
@@ -55,9 +55,10 @@ public class RelationshipFileUpload extends HttpServlet {
 		return relationshipFileUrl;
 	}
 	
-	private File generateRelationshipFile(ArrayList<JSONObject> jsonObjectList) throws IOException {
-		File relationshipFile = new File("relationship.xml");
+	private File generateRelationshipFile(HttpServletRequest request, ArrayList<JSONObject> jsonObjectList) throws IOException {
+		File relationshipFile = new File(request.getSession().getServletContext().getRealPath("/") + "relationship.xml");
 		FileWriter fw = new FileWriter(relationshipFile.getAbsolutePath());
+		System.out.println("relationshipFile.getAbsolutePath(): "+relationshipFile.getAbsolutePath());
 		BufferedWriter bw = new BufferedWriter(fw);
 		
 		JSONObject originalFile = null;

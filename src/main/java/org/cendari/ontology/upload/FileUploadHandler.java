@@ -78,7 +78,10 @@ public enum FileUploadHandler {
 	            	//filePath = request.getSession().getServletContext().getRealPath("/");
 	            	//System.out.println("filePath: "+filePath);
 	            	filePath = "/test/";
-	            	File directory = new File(filePath);
+	            	
+	            	filePath = System.getProperty("user.home");
+	            	
+	        		File directory = new File(filePath);
 	            	boolean isDirectoryExisted = false;
 	            	if (!directory.exists()) {
 	            		if (directory.mkdir()) {

@@ -72,6 +72,9 @@ public class RelationshipFileUpload extends HttpServlet {
 		//System.out.println("relationshipFile.getAbsolutePath(): "+relationshipFile.getAbsolutePath());
 		BufferedWriter bw = new BufferedWriter(fw);
 		
+		bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		bw.newLine();
+		
 		JSONObject originalFile = null;
 		JSONObject transformedFile = null;
 		JSONObject additionalFile = null;
@@ -112,7 +115,6 @@ public class RelationshipFileUpload extends HttpServlet {
     	        	bw.newLine();
             	}
         	}
-        	
 		}
 		bw.flush();
 		bw.close();

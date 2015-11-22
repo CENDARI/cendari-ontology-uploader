@@ -56,9 +56,9 @@ public class RelationshipFileUpload extends HttpServlet {
 	}
 	
 	private File generateRelationshipFile(HttpServletRequest request, ArrayList<JSONObject> jsonObjectList) throws IOException {
-		File relationshipFile = new File(request.getSession().getServletContext().getRealPath("/") + "relationship.xml");
+		File relationshipFile = new File("/var/lib/ontologyuploader/relationship.xml");
 		FileWriter fw = new FileWriter(relationshipFile.getAbsolutePath());
-		System.out.println("relationshipFile.getAbsolutePath(): "+relationshipFile.getAbsolutePath());
+		//System.out.println("relationshipFile.getAbsolutePath(): "+relationshipFile.getAbsolutePath());
 		BufferedWriter bw = new BufferedWriter(fw);
 		
 		JSONObject originalFile = null;

@@ -58,6 +58,10 @@ public class RelationshipFileUpload extends HttpServlet {
 	private File generateRelationshipFile(HttpServletRequest request, ArrayList<JSONObject> jsonObjectList) throws IOException {
 		File relationshipFile = new File("/test/relationship.xml");
 		
+		if (!relationshipFile.getParentFile().exists()) {
+			relationshipFile.getParentFile().mkdirs();
+		}
+		
 		if (!relationshipFile.exists()) {
 			relationshipFile.createNewFile();
 		}

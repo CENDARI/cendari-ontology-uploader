@@ -64,14 +64,19 @@ function validateForm() {
 </head>
 <body>
 	<%
-		if (session.getAttribute("alertMessage") != null) {
-			System.out.println("alertMessage");
-			String alertMessage = (String) session.getAttribute("alertMessage");
+		if (session.getAttribute("datasetCreationAlertMessage") != null) {
+			String datasetCreationAlertMessage = session.getAttribute("datasetCreationAlertMessage").toString();
+			String alertMessage = "";
+			if (session.getAttribute("alertMessage") != null) {
+				alertMessage = session.getAttribute("alertMessage").toString();
+			}
 			out.write("<script>");
-			out.write("alert(\"" + alertMessage + "\")");
+			out.write("alert(\"" + datasetCreationAlertMessage + " " + alertMessage + "\")");
 			out.write("</script>");
+			session.removeAttribute("datasetCreationAlertMessage");
 			session.removeAttribute("alertMessage");
 		}
+		
 		if (session.getAttribute("datasetTitleWarning") != null) {
 			String warningMessage = (String) session.getAttribute("datasetTitleWarning");
 			out.write("<script>");
@@ -143,8 +148,8 @@ function validateForm() {
 				<ul class="nav navbar-nav navbar-right">
 					<!-- <li><a href="">Login</a></li>  -->
 					<% 
-						if (session.getAttribute("sessionKey") != null) { 
-							out.write("<li><a href=\"https://localhost/Shibboleth.sso/Logout\">Logout</a></li>");
+						if (session.getAttribute("username") != null && session.getAttribute("sysadmin") != null && session.getAttribute("sessionKey") != null && session.getAttribute("host") != null) { 
+						 	out.write("<li><a href=\"https://localhost/Shibboleth.sso/Logout\">Logout</a></li>");
 						}
 						else {
 							out.write("<li><a href=\"https://localhost/Shibboleth.sso/Login?target=https://localhost/cendariontology/index.jsp\">Login</a></li>");
@@ -280,6 +285,7 @@ function validateForm() {
         </div>
         <div class="panel-body">
             <ul>
+            	<li>To create a new dataset, you may have to create a new dataspace from CKAN server https://repository.cendari.dariah.eu/</li>
             	<li>Dataset Title is a required field.</li>
             	<li>Description is optional.</li>
             	<!-- 

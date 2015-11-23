@@ -45,6 +45,9 @@ import org.json.simple.JSONObject;
 
 public enum FileUploadHandler {
 	INSTANCE;
+	
+	private static final String SAVE_DIR = "upload";
+	
 	public static FileUploadHandler getInstance() {
 		return INSTANCE;
 	}
@@ -53,7 +56,57 @@ public enum FileUploadHandler {
 		session.setAttribute(name, value);
 	}
 	
-	void processUploadRequest(HttpServletRequest request, HttpServletResponse response, String fileType) throws IOException {
+	private String extractFileName(Part part) {
+        String contentDisp = part.getHeader("content-disposition");
+        String[] items = contentDisp.split(";");
+        for (String s : items) {
+            if (s.trim().startsWith("filename")) {
+                return s.substring(s.indexOf("=") + 2, s.length()-1);
+            }
+        }
+        return "";
+    }
+	
+	void processUploadRequest(HttpServletRequest request, HttpServletResponse response, String fileType) throws IOException, ServletException {
+		// gets absolute path of the web application
+        String appPath = request.getServletContext().getRealPath("");
+        // constructs path of the directory to save uploaded file
+        String savePath = appPath + File.separator + SAVE_DIR;
+         
+        // creates the save directory if it does not exists
+        File fileSaveDir = new File(savePath);
+        if (!fileSaveDir.exists()) {
+            fileSaveDir.getParentFile().mkdirs();
+        }
+        
+        response.setContentType("application/json");
+	    JSONObject finalObj = new JSONObject();
+	    JSONArray list = new JSONArray();
+	    JSONObject obj = new JSONObject();
+        
+        for (Part part : request.getParts()) {
+            String fileName = extractFileName(part);
+            part.write(savePath + File.separator + fileName);
+            File fileToUpload = new File(savePath + File.separator + fileName);
+            String status = uploadFileToCKAN(request, fileToUpload, fileType);
+            
+            if (status.contains("201")) {
+       	 		obj.put("name", fileToUpload.getName());
+                obj.put("size", fileToUpload.length());
+                obj.put("url", "");
+                //obj.put("thumbnailUrl", filepath + item.getName());
+                obj.put("deleteUrl", "");
+                obj.put("deleteType", "DELETE");
+       	 	}
+       	 	else {
+       	 		obj.put("error", status);
+       	 	}
+            list.add(obj);
+        }
+        finalObj.put("files", list);
+    }
+	
+	/*void processUploadRequest(HttpServletRequest request, HttpServletResponse response, String fileType) throws IOException {
 		if (!ServletFileUpload.isMultipartContent(request)) {
 	        throw new IllegalArgumentException("Request is not multipart, please 'multipart/form-data' enctype for your form.");
 	    }
@@ -133,7 +186,7 @@ public enum FileUploadHandler {
 	    	writer.write(finalObj.toString());
 	        writer.close();
 	    }
-	}
+	}*/
 
 	String uploadFileToCKAN (HttpServletRequest request, File file, String description) {
 		String status = "";

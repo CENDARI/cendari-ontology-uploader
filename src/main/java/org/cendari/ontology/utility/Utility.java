@@ -76,7 +76,7 @@ public class Utility {
 				return false;
 			}
 			else {
-				//request.getSession().setAttribute("alertMessage", responseCode+" error!");
+				request.getSession().setAttribute("alertMessage", responseCode+" error!");
 			}
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
@@ -128,26 +128,26 @@ public class Utility {
 	
 	public static boolean createDatasetInCKAN(HttpServletRequest request, String setsUrl) {
 		String datasetTitle = "";
-		if (Utility.getSessionVariable(request, "datasetTitle") != null) {
-			datasetTitle = Utility.getSessionVariable(request, "datasetTitle").toString();
+		if (getSessionVariable(request, "datasetTitle") != null) {
+			datasetTitle = getSessionVariable(request, "datasetTitle").toString();
 		}
 		
 		String datasetDescription = "";
-		if (Utility.getSessionVariable(request, "datasetDescription") != null) {
-			datasetDescription = Utility.getSessionVariable(request, "datasetDescription").toString();
+		if (getSessionVariable(request, "datasetDescription") != null) {
+			datasetDescription = getSessionVariable(request, "datasetDescription").toString();
 		}
 		
 		String dataspaceId = "";
-		if (Utility.getSessionVariable(request, "dataspaceId") != null) {
-			dataspaceId = Utility.getSessionVariable(request, "dataspaceId").toString();
+		if (getSessionVariable(request, "dataspaceId") != null) {
+			dataspaceId = getSessionVariable(request, "dataspaceId").toString();
 		}
 		else {
 			return false;
 		}
 		
 		String sessionKey = "";
-		if (Utility.getSessionVariable(request, "sessionKey") != null) {
-			sessionKey = Utility.getSessionVariable(request, "sessionKey").toString();
+		if (getSessionVariable(request, "sessionKey") != null) {
+			sessionKey = getSessionVariable(request, "sessionKey").toString();
 		}
 		else {
 			return false;
@@ -199,18 +199,20 @@ public class Utility {
 		            	else if (line.contains("url")){
 		            		String url = line.substring(line.indexOf("http"), line.lastIndexOf("\""));
 		            		System.out.println("Dataset URL: "+url);
-		            		Utility.setSessionVariable(request, "datasetURL", url);
+		            		setSessionVariable(request, "datasetURL", url);
 		            		
 		            		String datasetId = line.substring(line.lastIndexOf("/")+1, line.lastIndexOf("\""));
 		            		System.out.println("Dataset name: "+datasetId);
-		            		Utility.setSessionVariable(request, "datasetId", datasetId);
+		            		setSessionVariable(request, "datasetId", datasetId);
 		            	}
 		            }
-		            Utility.setSessionVariable(request, "isDatasetCreated", "true");
+		            setSessionVariable(request, "isDatasetCreated", "true");
 		            return true;
         		}
         		else {
-        			Utility.setSessionVariable(request, "isDatasetCreated", "false");
+        			setSessionVariable(request, "isDatasetCreated", "false");
+        			setSessionVariable(request, "alertMessage", responseCode+" error!");
+        			System.out.println("alertMessage: "+responseCode+" error!");
         			return false;
         		}
             //}
@@ -309,7 +311,6 @@ public class Utility {
 	
 	public static void getUserSessionInfo(HttpServletRequest request, String eppn, String mail, String cn) {
 		try {
-			
 			setSessionVariable(request, "host", request.getHeader("host"));
 			
 			setHttpsHeader(request);
@@ -325,7 +326,7 @@ public class Utility {
 			StringBuffer requestBody = new StringBuffer();
 			
 			requestBody.append("{\"eppn\":\""+eppn+"\", \"mail\":\""+mail+"\", \"cn\":\""+cn+"\"}");
-						
+			
 			wr.writeBytes(requestBody.toString());
 			wr.flush();
 			wr.close();
@@ -354,6 +355,7 @@ public class Utility {
         		System.out.println("sysadmin: "+jsonObject.get("sysadmin"));
         		setSessionVariable(request, "sysadmin", jsonObject.get("sysadmin").toString());
         	}
+        	
         } catch (IOException e) {
 	        e.printStackTrace();
 	    }
@@ -396,7 +398,7 @@ public class Utility {
 	            }
 	        }
 			else {
-				Utility.setSessionVariable(request, "alertMessage", responseCode + " error!");
+				setSessionVariable(request, "alertMessage", responseCode + " error!");
 			}
         } catch (IOException e) {
             e.printStackTrace();
@@ -444,7 +446,7 @@ public class Utility {
 	            }
 	        }
 			else {
-				Utility.setSessionVariable(request, "alertMessage", responseCode + " error!");
+				setSessionVariable(request, "alertMessage", responseCode + " error!");
 			}
         } catch (IOException e) {
             e.printStackTrace();
@@ -499,7 +501,7 @@ public class Utility {
 	            }
 	        }
 			else {
-				Utility.setSessionVariable(request, "alertMessage", responseCode + " error!");
+				setSessionVariable(request, "alertMessage", responseCode + " error!");
 			}
         } catch (IOException e) {
             e.printStackTrace();
@@ -515,7 +517,7 @@ public class Utility {
             connection.setRequestMethod("GET");
             connection.setDoOutput(true);
             
-            connection.setRequestProperty("Authorization", Utility.getSessionVariable(request, "sessionKey").toString());
+            connection.setRequestProperty("Authorization", getSessionVariable(request, "sessionKey").toString());
 	        
             int responseCode = connection.getResponseCode();
 			System.out.println("Response Code : " + responseCode);

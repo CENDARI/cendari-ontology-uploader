@@ -95,8 +95,8 @@
 				<ul class="nav navbar-nav navbar-right">
 					<!-- <li><a href="">Login</a></li>  -->
 					<% 
-						if (session.getAttribute("sessionKey") != null) { 
-							out.write("<li><a href=\"https://localhost/Shibboleth.sso/Logout\">Logout</a></li>");
+						if (session.getAttribute("username") != null && session.getAttribute("sysadmin") != null && session.getAttribute("sessionKey") != null && session.getAttribute("host") != null) { 
+						 	out.write("<li><a href=\"https://localhost/Shibboleth.sso/Logout\">Logout</a></li>");
 						}
 						else {
 							out.write("<li><a href=\"https://localhost/Shibboleth.sso/Login?target=https://localhost/cendariontology/index.jsp\">Login</a></li>");

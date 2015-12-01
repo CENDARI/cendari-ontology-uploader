@@ -32,9 +32,13 @@ public class RelationshipFileUpload extends HttpServlet {
 		Utility.getFilesMetadata(Utility.getSessionVariable(request, "sessionKey").toString(), page, jsonObjectList);
 		
 		deleteRelationshipFiles(request, jsonObjectList);
-		File relationshipFile = generateRelationshipFile(request, jsonObjectList);
-		FileUploadHandler.INSTANCE.uploadFileToCKAN(request, relationshipFile, "Relationship File");
-		//response.sendRedirect(request.getContextPath() + "/uploadfinished.jsp");
+		synchronized (this) {
+			File relationshipFile = generateRelationshipFile(request, jsonObjectList);
+			FileUploadHandler.INSTANCE.uploadFileToCKAN(request, relationshipFile, "Relationship File");
+			if (relationshipFile.exists()) {
+	    		relationshipFile.delete();
+	    	}
+		}
 		NextStep.goToNextPage(request, response, request.getContextPath()+"/uploadfinished.jsp");
 	}
 	
@@ -56,7 +60,9 @@ public class RelationshipFileUpload extends HttpServlet {
 	}
 	
 	private File generateRelationshipFile(HttpServletRequest request, ArrayList<JSONObject> jsonObjectList) throws IOException {
-		File relationshipFile = new File("/test/relationship.xml");
+		String filePath = request.getServletContext().getRealPath("/")+"/upload/relationship.xml";
+		//filePath = "/test/relationship.xml";
+		File relationshipFile = new File(filePath);
 		
 		if (!relationshipFile.getParentFile().exists()) {
 			relationshipFile.getParentFile().mkdirs();

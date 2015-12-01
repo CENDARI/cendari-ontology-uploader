@@ -26,7 +26,7 @@
 </head>
 <body>
 	<%	
-		/*Enumeration headers = request.getHeaderNames();
+		/*Enumeration<String> headers = request.getHeaderNames();
 		while (headers.hasMoreElements()) {
 			String key = headers.nextElement().toString();
 			out.write("Key: "+ key + " Value: "+ request.getHeader(key));
@@ -36,7 +36,9 @@
 		out.write("request.isSecure() "+request.isSecure());
 		out.write("request.getScheme() "+request.getScheme());*/
 		
-		Utility.getUserSessionInfo(request, request.getHeader("eppn"), request.getHeader("mail"), request.getHeader("cn"));
+		Utility.getUserSessionInfo(request, "JunZhang@dariah.eu", "jun.zhang@kcl.ac.uk", "Jun Zhang");
+		
+		//Utility.getUserSessionInfo(request, request.getHeader("eppn"), request.getHeader("mail"), request.getHeader("cn"));
 		/*if (session.getAttribute("alertMessage") != null) {
 			String alertMessage = (String) session.getAttribute("alertMessage");
 			out.write("<script>");
@@ -105,10 +107,10 @@
 					<!-- <li><a href="">Login</a></li>  -->
 					<% 
 						if (session.getAttribute("username") != null && session.getAttribute("sysadmin") != null && session.getAttribute("sessionKey") != null && session.getAttribute("host") != null) { 
-							out.write("<li><a href=\"https://"+session.getAttribute("host").toString()+"/Shibboleth.sso/Logout\">Logout</a></li>");
+							out.write("<li><a href=\"https://"+session.getAttribute("host")+"/Shibboleth.sso/Logout\">Logout</a></li>");
 						}
 						else {
-							out.write("<li><a href=\"https://localhost/Shibboleth.sso/Login?target=https://localhost/cendariontology/index.jsp\">Login</a></li>");
+							out.write("<li><a href=\"https://"+request.getHeader("host")+"/Shibboleth.sso/Login?target=https://"+request.getHeader("host")+"/ontologyuploader/index.jsp\">Login</a></li>");
 						}
 					%>
 				</ul>

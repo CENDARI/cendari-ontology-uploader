@@ -48,10 +48,10 @@
 					<!-- <li><a href="">Login</a></li>  -->
 					<% 
 						if (session.getAttribute("username") != null && session.getAttribute("sysadmin") != null && session.getAttribute("sessionKey") != null && session.getAttribute("host") != null) { 
-						 	out.write("<li><a href=\"https://localhost/Shibboleth.sso/Logout\">Logout</a></li>");
+							out.write("<li><a href=\"https://"+session.getAttribute("host")+"/Shibboleth.sso/Logout\">Logout</a></li>");
 						}
 						else {
-							out.write("<li><a href=\"https://localhost/Shibboleth.sso/Login?target=https://localhost/cendariontology/index.jsp\">Login</a></li>");
+							out.write("<li><a href=\"https://"+request.getHeader("host")+"/Shibboleth.sso/Login?target=https://"+request.getHeader("host")+"/ontologyuploader/index.jsp\">Login</a></li>");
 						}
 					%>
 				</ul>
@@ -185,7 +185,7 @@
         </div>
         <div class="panel-body">
             <ul>
-            	<li>To view dataspaces, you may have to create a new account and/or a new dataspace from CKAN server https://repository.cendari.dariah.eu/ </li>
+            	<li style="color:red">To view dataspaces, please make sure you have an account on the CKAN server and you have at least created one dataspace on the CKAN server.</li>
             	<li>A dataspace created by other user is not be viewable if that dataspace is private.</li>
                 <!-- 
                 <li>The maximum file size for uploads in this demo is <strong>999 KB</strong> (default file size is unlimited).</li>

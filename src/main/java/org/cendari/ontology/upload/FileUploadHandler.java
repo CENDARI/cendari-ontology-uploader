@@ -67,7 +67,7 @@ public enum FileUploadHandler {
         return "";
     }
 	
-	void processUploadRequest(HttpServletRequest request, HttpServletResponse response, String fileType) throws IOException, ServletException {
+	/*void processUploadRequest(HttpServletRequest request, HttpServletResponse response, String fileType) throws IOException, ServletException {
 		// gets absolute path of the web application
         String appPath = request.getServletContext().getRealPath("");
         // constructs path of the directory to save uploaded file
@@ -104,9 +104,9 @@ public enum FileUploadHandler {
             list.add(obj);
         }
         finalObj.put("files", list);
-    }
+    }*/
 	
-	/*void processUploadRequest(HttpServletRequest request, HttpServletResponse response, String fileType) throws IOException {
+	void processUploadRequest(HttpServletRequest request, HttpServletResponse response, String fileType) throws IOException {
 		if (!ServletFileUpload.isMultipartContent(request)) {
 	        throw new IllegalArgumentException("Request is not multipart, please 'multipart/form-data' enctype for your form.");
 	    }
@@ -125,12 +125,8 @@ public enum FileUploadHandler {
 	        //uploadFilesToCKAN(request, items);
 	        for (FileItem item : items) {
 	        	if (!item.isFormField()) {
-	            	//String filePath = request.getServletContext().getRealPath("/")+"/upload/";
-	            	String filePath = request.getServletContext().getRealPath("/");
-	            	//System.out.println("filePath: "+filePath);
-	            	//filePath = request.getSession().getServletContext().getRealPath("/");
-	            	//System.out.println("filePath: "+filePath);
-	            	filePath = "/test/";
+	            	String filePath = request.getServletContext().getRealPath("/")+"/upload/";
+	            	//filePath = "/test/";
 	            	
 	        		File directory = new File(filePath);
 	            	boolean isDirectoryExisted = false;
@@ -149,31 +145,34 @@ public enum FileUploadHandler {
 	            	if (isDirectoryExisted) {
 	            		file = new File(filePath, item.getName());
 	            		
-	            		if (!file.exists()) {
-	        				file.createNewFile();
-	        			}
-	            		
-		           	 	item.write(file);
-		           	 	
-		           	 	String status = uploadFileToCKAN(request, file, fileDescription);
-		           	 	
-		           	 	JSONObject obj = new JSONObject();
-		           	 	if (status.contains("201")) {
-		           	 		obj.put("name", item.getName());
-			                obj.put("size", item.getSize());
-			                obj.put("url", filePath + item.getName());
-			                //obj.put("thumbnailUrl", filepath + item.getName());
-			                obj.put("deleteUrl", filePath + item.getName());
-			                obj.put("deleteType", "DELETE");
-		           	 	}
-		           	 	else {
-		           	 		obj.put("error", status);
-		           	 	}
-		                list.add(obj);
+	            		synchronized (this) {
+		            		if (!file.exists()) {
+		        				file.createNewFile();
+		        			}
+		            		
+			           	 	item.write(file);
+			           	 	
+			           	 	String status = uploadFileToCKAN(request, file, fileDescription);
+			           	 	
+			           	 	JSONObject obj = new JSONObject();
+			           	 	if (status.contains("201")) {
+			           	 		obj.put("name", item.getName());
+				                obj.put("size", item.getSize());
+				                obj.put("url", filePath + item.getName());
+				                //obj.put("thumbnailUrl", filepath + item.getName());
+				                obj.put("deleteUrl", filePath + item.getName());
+				                obj.put("deleteType", "DELETE");
+			           	 	}
+			           	 	else {
+			           	 		obj.put("error", status);
+			           	 	}
+			                list.add(obj);
+			                if (file.exists()) {
+			            		file.delete();
+			            	}
+	            		}
 		            }
-	            	if (file.exists()) {
-	            		//file.delete();
-	            	}
+	            	
 	            }
 	        }
 	        finalObj.put("files", list);
@@ -186,7 +185,7 @@ public enum FileUploadHandler {
 	    	writer.write(finalObj.toString());
 	        writer.close();
 	    }
-	}*/
+	}
 
 	String uploadFileToCKAN (HttpServletRequest request, File file, String description) {
 		String status = "";

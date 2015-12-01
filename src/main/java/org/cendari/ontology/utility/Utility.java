@@ -311,7 +311,9 @@ public class Utility {
 	
 	public static void getUserSessionInfo(HttpServletRequest request, String eppn, String mail, String cn) {
 		try {
+			
 			setSessionVariable(request, "host", request.getHeader("host"));
+			//setSessionVariable(request, "sessionKey", "c821daf7-9439-4dcd-a203-20a57eafdb66");
 			
 			setHttpsHeader(request);
 			

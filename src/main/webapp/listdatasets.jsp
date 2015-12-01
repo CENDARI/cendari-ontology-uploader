@@ -58,10 +58,10 @@
 					<!-- <li><a href="">Login</a></li>  -->
 					<% 
 						if (session.getAttribute("username") != null && session.getAttribute("sysadmin") != null && session.getAttribute("sessionKey") != null && session.getAttribute("host") != null) { 
-							out.write("<li><a href=\"https://localhost/Shibboleth.sso/Logout\">Logout</a></li>");
+							out.write("<li><a href=\"https://"+session.getAttribute("host")+"/Shibboleth.sso/Logout\">Logout</a></li>");
 						}
 						else {
-							out.write("<li><a href=\"https://localhost/Shibboleth.sso/Login?target=https://localhost/cendariontology/index.jsp\">Login</a></li>");
+							out.write("<li><a href=\"https://"+request.getHeader("host")+"/Shibboleth.sso/Login?target=https://"+request.getHeader("host")+"/ontologyuploader/index.jsp\">Login</a></li>");
 						}
 					%>
 				</ul>
@@ -201,10 +201,8 @@
         </div>
         <div class="panel-body">
             <ul>
-            	<li>A</li>
-            	<li>B</li>
-            	<li>C</li>
-                <!-- 
+            	<li style="color:red">To view datassets, please make sure you have an account on the CKAN server and you have at least created one dataspace and one dataset on the CKAN server.</li>
+            	<!-- 
                 <li>The maximum file size for uploads in this demo is <strong>999 KB</strong> (default file size is unlimited).</li>
                 <li>Only image files (<strong>JPG, GIF, PNG</strong>) are allowed in this demo (by default there is no file type restriction).</li>
                 <li>Uploaded files will be deleted automatically after <strong>5 minutes or less</strong> (demo files are stored in memory).</li>

@@ -66,15 +66,19 @@ function validateForm() {
 	<%
 		
 		if (session.getAttribute("datasetCreationAlertMessage") != null) {
-			String datasetCreationAlertMessage = session.getAttribute("datasetCreationAlertMessage").toString();
-			String alertMessage = "";
-			if (session.getAttribute("alertMessage") != null) {
-				alertMessage = session.getAttribute("alertMessage").toString();
-			}
+			String datasetCreationAlertMessage = (String) session.getAttribute("datasetCreationAlertMessage");
 			out.write("<script>");
-			out.write("alert(\"" + datasetCreationAlertMessage + " " + alertMessage + "\")");
+			out.write("alert(\"" + datasetCreationAlertMessage + "\")");
 			out.write("</script>");
 			session.removeAttribute("datasetCreationAlertMessage");
+		}
+		
+		if (session.getAttribute("alertMessage") != null) {
+			String datasetCreationAlertMessage = (String) session.getAttribute("alertMessage");
+			String alertMessage = session.getAttribute("alertMessage").toString();
+			out.write("<script>");
+			out.write("alert(\"" + alertMessage + "\")");
+			out.write("</script>");
 			session.removeAttribute("alertMessage");
 		}
 		

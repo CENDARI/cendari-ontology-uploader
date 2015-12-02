@@ -29,8 +29,13 @@ public class RelationshipFileUpload extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ArrayList<JSONObject> jsonObjectList = new ArrayList<JSONObject>();
 		String page = "http://localhost:42042/v1/sets/"+Utility.getSessionVariable(request, "datasetId")+"/resources";
-		Utility.getFilesMetadata(Utility.getSessionVariable(request, "sessionKey").toString(), page, jsonObjectList);
-		
+		if (Utility.getSessionVariable(request, "username") == null || Utility.getSessionVariable(request, "sysadmin") == null || Utility.getSessionVariable(request, "sessionKey") == null) { 
+			Utility.setSessionVariable(request, "relationshipFileCreationAlertMessage", "The relationship file was not created! Please login first.");
+		}
+		else {
+			Utility.getFilesMetadata(Utility.getSessionVariable(request, "sessionKey").toString(), page, jsonObjectList);
+		}
+			
 		deleteRelationshipFiles(request, jsonObjectList);
 		synchronized (this) {
 			File relationshipFile = generateRelationshipFile(request, jsonObjectList);

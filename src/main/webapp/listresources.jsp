@@ -35,6 +35,18 @@
 <!-- CSS adjustments for browsers with JavaScript disabled -->
 <noscript><link rel="stylesheet" href="css/jquery.fileupload-noscript.css"></noscript>
 <noscript><link rel="stylesheet" href="css/jquery.fileupload-ui-noscript.css"></noscript>
+<script>
+function confirmDelete() {
+    var x;
+    if (confirm("Are you sure you want to delete this file?") == true) {
+    	//window.location.href='http://someplace.com';
+    	return true;
+    }
+    else {
+    	return false;
+    }
+}
+</script>
 </head>
 <body>
 	<div class="navbar navbar-default navbar-fixed-top">
@@ -141,7 +153,9 @@
 			      		<td><%=resource.get("created") %></td>
 			      		<td><%=resource.get("modified") %></td>
 			      		<td>
-							<form action="DeleteFile.do" method="POST">
+			      			<form onsubmit="return confirmDelete()" action="DeleteFile.do" method="POST">
+							<!-- <form onsubmit="confirmDelete()" action="DeleteFile.do" method="POST">  -->
+							<!-- <form action="DeleteFile.do" method="POST"> -->
 								<input type="hidden" name="resourcePage" value="<%=resource.get("viewDataUrl")%>">
 								<input type="hidden" name="fileDeleteUrl" value="<%=resource.get("url")%>">
 								<input type="hidden" name="fileName" value="<%=resource.get("name")%>">

@@ -132,10 +132,10 @@ public enum FileUploadHandler {
 	            	boolean isDirectoryExisted = false;
 	            	if (!directory.exists()) {
 	            		if (directory.mkdir()) {
-	            			System.out.println("Directory is created!");
+	            			//System.out.println("Directory is created!");
 	            			isDirectoryExisted = true;
 		            	} else {
-	            			System.out.println("Failed to create directory!");
+	            			//System.out.println("Failed to create directory!");
 	            		}
 	            	}
 	            	else {
@@ -200,9 +200,9 @@ public enum FileUploadHandler {
 		}
 		
 		File uploadFile = file;
-		System.out.println("Uploading file "+file.getName());
-		System.out.println("sessionKey: "+sessionKey);
-		System.out.println("datasetId: "+datasetId);
+		//System.out.println("Uploading file "+file.getName());
+		//System.out.println("sessionKey: "+sessionKey);
+		//System.out.println("datasetId: "+datasetId);
 		
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		
@@ -225,11 +225,11 @@ public enum FileUploadHandler {
 		try {
 			response = httpclient.execute(httpPost);
 			status = response.getStatusLine().toString();
-			System.out.println("status: "+status);
+			//System.out.println("status: "+status);
 		    
 			HttpEntity entity = response.getEntity();
-	        System.out.println(entity.toString());
-	            //return entity != null ? EntityUtils.toString(entity) : null;
+	        //System.out.println(entity.toString());
+	        //return entity != null ? EntityUtils.toString(entity) : null;
 	        
 		    httpclient.close();
 		} catch (ClientProtocolException e) {
@@ -245,7 +245,6 @@ public enum FileUploadHandler {
 	
 	private void uploadFilesToCKAN (HttpServletRequest request, List<FileItem> fileList) {
 		//List<FileItem> items = fileList;
-		System.out.println("Uploading files.");
 		ListIterator<FileItem> it = fileList.listIterator();
 		
 		if (it.hasNext()) {
@@ -254,7 +253,6 @@ public enum FileUploadHandler {
 				do {
 					FileItem fileItem = it.next();
 					File file = new File(request.getServletContext().getRealPath("/")+"/imgs/", fileItem.getName());
-					System.out.println("Uploading file "+fileItem.getName());
 					Process p = Runtime.getRuntime().exec("curl -H 'Authorization: c821daf7-9439-4dcd-a203-20a57eafdb66' -F 'file=@"+file.getAbsolutePath()+"'  -F 'name="+file.getName()+"' -F 'format="+getMimeType(file)+"'  -F 'description=Test'  -F 'setId=b12c4a48-70c7-465c-a55e-9ffd295f1f50' http://localhost:42042/v1/resources");
 					in = new BufferedReader(
 		                    new InputStreamReader(p.getInputStream()));

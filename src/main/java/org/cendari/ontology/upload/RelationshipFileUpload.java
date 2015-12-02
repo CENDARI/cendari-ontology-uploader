@@ -88,10 +88,10 @@ public class RelationshipFileUpload extends HttpServlet {
 		ListIterator<JSONObject> it = jsonObjectList.listIterator();
 		while (it.hasNext()) {
 			JSONObject jsonObject = (JSONObject)it.next();
-	        System.out.println(jsonObject);
+	        //System.out.println(jsonObject);
 	        JSONArray data = (JSONArray) jsonObject.get("data");
 	        for (int i = 0; i < data.size(); i++) {
-	        	System.out.println(data.get(i));
+	        	//System.out.println(data.get(i));
 	        	
 	        	//bw.write(data.get(i).toString().replace("\\/", "/"));
 	        	//bw.newLine();

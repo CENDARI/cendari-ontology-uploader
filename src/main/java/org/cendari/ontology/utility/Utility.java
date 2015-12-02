@@ -50,7 +50,7 @@ public class Utility {
 	        connection.setDoOutput(true);
 	        connection.setRequestProperty ("Authorization", sessionKey);
 	        int responseCode = connection.getResponseCode();
-			System.out.println("Response Code : " + responseCode);
+			//System.out.println("Response Code : " + responseCode);
 			if (responseCode < 400) {
 				InputStream content = (InputStream)connection.getInputStream();
 		        BufferedReader in   = 
@@ -59,7 +59,7 @@ public class Utility {
 		        String line = null;
 		        String nextPage = "";
 		        while ((line = in.readLine()) != null) {
-		            System.out.println(line);
+		            //System.out.println(line);
 		            if (line.contains("\"title\":")) {
 		            	//dataset.setTitle(line.substring(line.indexOf(":")+3, line.lastIndexOf("\"")));
 		            	if (line.substring(line.indexOf(":")+3, line.lastIndexOf("\"")).equals(datasetTitle)) {
@@ -104,7 +104,7 @@ public class Utility {
         String line = null;
         String nextPage = "";
         while ((line = in.readLine()) != null) {
-            System.out.println(line);
+            //System.out.println(line);
             if (line.contains("\"name\":")) {
             	//dataset.setTitle(line.substring(line.indexOf(":")+3, line.lastIndexOf("\"")));
             	if (line.substring(line.indexOf(":")+3, line.lastIndexOf("\"")).equals(datasetName)) {
@@ -113,7 +113,7 @@ public class Utility {
             }
             else if (line.contains("\"nextPage\":")) {
             	nextPage = line.substring(line.indexOf(":")+3, line.lastIndexOf("\""));
-            	System.out.println("[DatasetsList] nextPage: "+nextPage);
+            	//System.out.println("[DatasetsList] nextPage: "+nextPage);
             }
         }
         if (nextPage != "") {
@@ -185,24 +185,24 @@ public class Utility {
         		wr.close();
         		
         		int responseCode = con.getResponseCode();
-        		System.out.println("Response Code : " + responseCode);
+        		//System.out.println("Response Code : " + responseCode);
         		
         		if (responseCode == 201) {
         			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 		            String line = null;
 		            while ((line = in.readLine()) != null) {
-		            	System.out.println(line);
+		            	//System.out.println(line);
 		            	//appendLogFile(request.getServletContext().getRealPath("/")+"/upload/log.txt", line);
 		            	if (line.contains("active")) {
 		            		isDatasetCreated = true;
 		            	}
 		            	else if (line.contains("url")){
 		            		String url = line.substring(line.indexOf("http"), line.lastIndexOf("\""));
-		            		System.out.println("Dataset URL: "+url);
+		            		//System.out.println("Dataset URL: "+url);
 		            		setSessionVariable(request, "datasetURL", url);
 		            		
 		            		String datasetId = line.substring(line.lastIndexOf("/")+1, line.lastIndexOf("\""));
-		            		System.out.println("Dataset name: "+datasetId);
+		            		//System.out.println("Dataset name: "+datasetId);
 		            		setSessionVariable(request, "datasetId", datasetId);
 		            	}
 		            }
@@ -212,7 +212,7 @@ public class Utility {
         		else {
         			setSessionVariable(request, "isDatasetCreated", "false");
         			setSessionVariable(request, "alertMessage", responseCode+" error!");
-        			System.out.println("alertMessage: "+responseCode+" error!");
+        			//System.out.println("alertMessage: "+responseCode+" error!");
         			return false;
         		}
             //}
@@ -290,7 +290,7 @@ public class Utility {
             connection.setRequestProperty("Authorization", sessionKey);
 	        
             int responseCode = connection.getResponseCode();
-			System.out.println("Response Code : " + responseCode);
+			//System.out.println("Response Code : " + responseCode);
 			/*String line = null;
 	        while ((line = in.readLine()) != null) {
 	            System.out.println(line);
@@ -333,7 +333,7 @@ public class Utility {
 			wr.flush();
 			wr.close();
 			int responseCode = connection.getResponseCode();
-			System.out.println("Response Code : " + responseCode);
+			//System.out.println("Response Code : " + responseCode);
 			
 			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 	        String line = "";
@@ -346,15 +346,12 @@ public class Utility {
 	        Object obj = JSONValue.parse(response);
         	JSONObject jsonObject = (JSONObject)obj;
         	if (jsonObject.get("username") != null) {
-        		System.out.println("username: "+jsonObject.get("username"));
         		setSessionVariable(request, "username", jsonObject.get("username").toString());
         	}
         	if (jsonObject.get("sessionKey") != null) {
-        		System.out.println("sessionKey: "+jsonObject.get("sessionKey"));
         		setSessionVariable(request, "sessionKey", jsonObject.get("sessionKey").toString());
         	}
         	if (jsonObject.get("sysadmin") != null) {
-        		System.out.println("sysadmin: "+jsonObject.get("sysadmin"));
         		setSessionVariable(request, "sysadmin", jsonObject.get("sysadmin").toString());
         	}
         	
@@ -373,7 +370,7 @@ public class Utility {
             connection.setRequestProperty ("Authorization", sessionKey);
             
             int responseCode = connection.getResponseCode();
-			System.out.println("Response Code : " + responseCode);
+			//System.out.println("Response Code : " + responseCode);
 			String responseBody = "";
 			if (responseCode == 200) {
 	            InputStream content = (InputStream)connection.getInputStream();
@@ -382,11 +379,10 @@ public class Utility {
 	            String line = null;
 	            String nextPage = "";
 	            while ((line = in.readLine()) != null) {
-	                System.out.println(line);
+	                //System.out.println(line);
 	                responseBody = responseBody + line;
 	                if (line.contains("\"nextPage\":")) {
 	                	nextPage = line.substring(line.indexOf(":")+3, line.lastIndexOf("\""));
-	                	System.out.println("nextPage: "+nextPage);
 	                }
 	            }
 	            Object obj = JSONValue.parse(responseBody);
@@ -418,7 +414,7 @@ public class Utility {
             connection.setRequestProperty ("Authorization", sessionKey);
             
             int responseCode = connection.getResponseCode();
-			System.out.println("Response Code : " + responseCode);
+			//System.out.println("Response Code : " + responseCode);
 			String responseBody = "";
 			if (responseCode == 200) {
 	            InputStream content = (InputStream)connection.getInputStream();
@@ -427,11 +423,11 @@ public class Utility {
 	            String line = null;
 	            String nextPage = "";
 	            while ((line = in.readLine()) != null) {
-	                System.out.println(line);
+	                //System.out.println(line);
 	                responseBody = responseBody + line;
 	                if (line.contains("\"nextPage\":")) {
 	                	nextPage = line.substring(line.indexOf(":")+3, line.lastIndexOf("\""));
-	                	System.out.println("nextPage: "+nextPage);
+	                	//System.out.println("nextPage: "+nextPage);
 	                }
 	                /*if (!line.contains("\"end\": true")) {
 	                	responseBody = responseBody + line;
@@ -467,7 +463,7 @@ public class Utility {
             connection.setRequestProperty ("Authorization", sessionKey);
             
             int responseCode = connection.getResponseCode();
-			System.out.println("Response Code : " + responseCode);
+			//System.out.println("Response Code : " + responseCode);
 			String responseBody = "";
 			if (responseCode == 200) {
 	            InputStream content = (InputStream)connection.getInputStream();
@@ -480,14 +476,19 @@ public class Utility {
 	            	if (line.contains("\"nextPage\":")) {
 	                	nextPage = line.substring(line.indexOf(":")+3, line.lastIndexOf("\""));
 	                }
+	            	else if (line.contains("\"name\":")) {
+	            		//System.out.println("[Utility.getResourcesMetadata()] resource name: "+line);
+	            	}
 	            	//If a resource shows "deleted" on CKAN's website, the CENDARI REST API still returns active. So the resource's state needs to be checked.
 	                else if (line.contains("\"viewDataUrl\":")) {
 	                	resourceState = getResourceState(request, line.substring(line.indexOf(":")+3, line.lastIndexOf("\"")));
 	                }
 	            	//If a resource shows "deleted" on CKAN's website, the CENDARI REST API still returns active. So the state needs to be updated.
 	                else if (line.contains("\"state\":")) {
+	                	//System.out.println("[Utility.getResourcesMetadata()] state from REST API: "+line);
 	                	if (line.contains("active") && resourceState.equals("deleted")) {
 	                		line = line.replace("active", "deleted");
+	                		//System.out.println("[Utility.getResourcesMetadata()] state from REST API after update: "+line);
 	                	}
 	                }
 	                responseBody = responseBody + line;
@@ -496,7 +497,7 @@ public class Utility {
 	        	JSONObject jsonObject = (JSONObject)obj;
 	        	resourceArray = (JSONArray)jsonObject.get("data");
 	            if (nextPage != "") {
-	            	JSONArray nextPageResourceArray = getDatasetsMetadata(request, sessionKey, nextPage);
+	            	JSONArray nextPageResourceArray = getResourcesMetadata(request, sessionKey, nextPage);
 	            	if (nextPageResourceArray != null) {
 	            		resourceArray.addAll(nextPageResourceArray);
 	            	}
@@ -522,14 +523,14 @@ public class Utility {
             connection.setRequestProperty("Authorization", getSessionVariable(request, "sessionKey").toString());
 	        
             int responseCode = connection.getResponseCode();
-			System.out.println("Response Code : " + responseCode);
+			//System.out.println("Response Code : " + responseCode);
 			String responseBody = "";
 			if (responseCode == 200) {
 		        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 		        String line = null;
 		        while ((line = in.readLine()) != null) {
 		        	if (line.contains("<th scope=\"row\">state</th>")) {
-		            	if (line.contains("active")) {
+		        		if (line.contains("active")) {
 		            		return "active";
 		            	}
 		            	else if (line.contains("deleted")) {

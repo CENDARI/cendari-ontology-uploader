@@ -19,8 +19,6 @@ public class FileDelete extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//RequestDispatcher rd = request.getRequestDispatcher("listresources.jsp");
 		//rd.forward(request, response);
-		System.out.println("fileDeleteUrl: "+request.getParameter("fileDeleteUrl"));
-		
 		if (Utility.getSessionVariable(request, "sessionKey") != null) {
 			Utility.deleteFile(Utility.getSessionVariable(request, "sessionKey").toString(), request.getParameter("fileDeleteUrl"));
 		}

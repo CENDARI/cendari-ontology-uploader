@@ -26,26 +26,9 @@
 </head>
 <body>
 	<%	
-		/*Enumeration<String> headers = request.getHeaderNames();
-		while (headers.hasMoreElements()) {
-			String key = headers.nextElement().toString();
-			out.write("Key: "+ key + " Value: "+ request.getHeader(key));
-			out.write("\r\n");
-		}
 		
-		out.write("request.isSecure() "+request.isSecure());
-		out.write("request.getScheme() "+request.getScheme());*/
+		Utility.getUserSessionInfo(request, request.getHeader("eppn"), request.getHeader("mail"), request.getHeader("cn"));
 		
-		Utility.getUserSessionInfo(request, "JunZhang@dariah.eu", "jun.zhang@kcl.ac.uk", "Jun Zhang");
-		
-		//Utility.getUserSessionInfo(request, request.getHeader("eppn"), request.getHeader("mail"), request.getHeader("cn"));
-		/*if (session.getAttribute("alertMessage") != null) {
-			String alertMessage = (String) session.getAttribute("alertMessage");
-			out.write("<script>");
-			out.write("alert(\"" + alertMessage + "\")");
-			out.write("</script>");
-			session.removeAttribute("alertMessage");
-		}*/
 	%>
 	<div class="navbar navbar-default navbar-fixed-top">
 		<div class="container">

@@ -109,9 +109,6 @@
 			  			//PrintWriter printwriter = response.getWriter();
 			        	
 				    	JSONArray datasetArray = null; 
-				    	System.out.println("dataspaceId: "+session.getAttribute("dataspaceId"));
-				    	System.out.println("sessionKey: "+session.getAttribute("sessionKey"));
-				    	System.out.println("dataspaceUrl: "+session.getAttribute("dataspaceUrl"));
 				    	
 			        	if (session.getAttribute("sessionKey") != null) {
 			        		datasetArray = Utility.getDatasetsMetadata(request, session.getAttribute("sessionKey").toString(), "http://localhost:42042/v1/sets?dataspaceId="+session.getAttribute("dataspaceId"));

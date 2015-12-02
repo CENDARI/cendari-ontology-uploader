@@ -26,11 +26,6 @@ public class DatasetDescriptionUpload extends HttpServlet {
 						
 		Utility.setSessionVariable(request, "isDatasetCreated", "false");
 		
-		System.out.println("---DatasetDescriptionUpload---");
-		System.out.println("datasetTitle: "+ Utility.getSessionVariable(request, "datasetTitle"));
-		System.out.println("datasetDescription: "+ Utility.getSessionVariable(request, "datasetDescription"));
-		System.out.println("dataspaceId: "+ Utility.getSessionVariable(request, "dataspaceId"));
-		System.out.println("sessionKey: "+ Utility.getSessionVariable(request, "sessionKey"));
 		//FileUploadHandler handler = new FileUploadHandler();
 		//handler.createDatasetInCKAN(request, ontologytitle, description, license, rightsdescription, sourceuri);
 		
@@ -59,7 +54,6 @@ public class DatasetDescriptionUpload extends HttpServlet {
 		}
 		//If there is any alert, show it to the user and return to uploaddatasetdescription.jsp.
 		else {
-			System.out.println(Utility.getSessionVariable(request, "alertMessage"));
 			request.getRequestDispatcher("uploaddatasetdescription.jsp").forward(request, response);
 		}
 	}

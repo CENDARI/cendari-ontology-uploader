@@ -50,7 +50,7 @@ public class NextStep extends HttpServlet {
 	
 	public static void goToNextPage(HttpServletRequest request, HttpServletResponse response, String nextPage) throws IOException, ServletException {
 		String host = request.getHeader("host");
-		System.out.println("nextPage: "+nextPage);
+		//System.out.println("nextPage: "+nextPage);
 		if (host != null && !host.contains("localhost")) {
 			response.sendRedirect(getHttpsUrl(host, nextPage));
 			//request.getRequestDispatcher(getHttpsUrl(host, nextPage)).forward(request, response);

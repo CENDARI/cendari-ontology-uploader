@@ -26,7 +26,7 @@
 </head>
 <body>
 	<%	
-		/*Enumeration<String> headers = request.getHeaderNames();
+		Enumeration<String> headers = request.getHeaderNames();
 		while (headers.hasMoreElements()) {
 			String key = headers.nextElement().toString();
 			out.write("Key: "+ key + " Value: "+ request.getHeader(key));
@@ -34,7 +34,7 @@
 		}
 		
 		out.write("request.isSecure() "+request.isSecure());
-		out.write("request.getScheme() "+request.getScheme());*/
+		out.write("request.getScheme() "+request.getScheme());
 		
 		Utility.getUserSessionInfo(request, request.getHeader("eppn"), request.getHeader("mail"), request.getHeader("cn"));
 		/*if (session.getAttribute("alertMessage") != null) {

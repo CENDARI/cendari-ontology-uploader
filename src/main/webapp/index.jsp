@@ -37,6 +37,12 @@
 		out.write("request.getScheme() "+request.getScheme());
 		
 		Utility.getUserSessionInfo(request, request.getHeader("eppn"), request.getHeader("mail"), request.getHeader("cn"));
+		
+		out.write("username: "+ Utility.getSessionVariable(request, "username"));
+		out.write("sessionKey: "+ Utility.getSessionVariable(request, "sessionKey"));
+		out.write("sysadmin: "+ Utility.getSessionVariable(request, "sysadmin"));
+		
+		
 		/*if (session.getAttribute("alertMessage") != null) {
 			String alertMessage = (String) session.getAttribute("alertMessage");
 			out.write("<script>");

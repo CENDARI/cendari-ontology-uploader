@@ -26,7 +26,7 @@
 </head>
 <body>
 	<%	
-		Enumeration<String> headers = request.getHeaderNames();
+		/*Enumeration<String> headers = request.getHeaderNames();
 		while (headers.hasMoreElements()) {
 			String key = headers.nextElement().toString();
 			out.write("Key: "+ key + " Value: "+ request.getHeader(key));
@@ -34,13 +34,13 @@
 		}
 		
 		out.write("request.isSecure() "+request.isSecure());
-		out.write("request.getScheme() "+request.getScheme());
+		out.write("request.getScheme() "+request.getScheme());*/
 		
 		Utility.getUserSessionInfo(request, request.getHeader("eppn"), request.getHeader("mail"), request.getHeader("cn"));
 		
-		out.write("username: "+ Utility.getSessionVariable(request, "username"));
-		out.write("sessionKey: "+ Utility.getSessionVariable(request, "sessionKey"));
-		out.write("sysadmin: "+ Utility.getSessionVariable(request, "sysadmin"));
+		//out.write("username: "+ Utility.getSessionVariable(request, "username"));
+		//out.write("sessionKey: "+ Utility.getSessionVariable(request, "sessionKey"));
+		//out.write("sysadmin: "+ Utility.getSessionVariable(request, "sysadmin"));
 		
 		
 		/*if (session.getAttribute("alertMessage") != null) {
@@ -133,6 +133,8 @@
   <p>To create new data sets and upload files to new data sets, please <a href="uploaddatasetdescription.jsp">click here >></a></p>
   <br>
   <p>To view/download files and upload files to existing data sets, please <a href="listdataspaces.jsp">click here >></a></p>
+  <br>
+  <p style="color:red">Note: Please make you are logged-in (If not, please click the "Login" on the top right corner of this page) before other operations. If the web pages keep showing "Login" after you logged in, please contact the administrator.</p>
   
 </div>
 

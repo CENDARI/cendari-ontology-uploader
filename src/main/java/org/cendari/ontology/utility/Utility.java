@@ -24,6 +24,8 @@ import org.json.simple.JSONValue;
 public class Utility {
 	private static final SecureRandom random = new SecureRandom();
 	
+	public static final String tempUploadDirectory = "/tmp/ontologyuploader";
+	
 	public static void setSessionVariable(HttpServletRequest request, String name, String value) {
 		HttpSession session = request.getSession(true);
 		session.setAttribute(name, value);
@@ -451,6 +453,40 @@ public class Utility {
         }
         //return dataspaceNames;
 		return datasetArray;
+	}
+	
+	public static JSONObject getADatasetMetadata(HttpServletRequest request, String sessionKey, String datasetUrl) {
+		JSONObject jsonObject = null;
+		try {
+			URL url = new URL (datasetUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setDoOutput(true);
+            connection.setRequestProperty ("Authorization", sessionKey);
+            
+            int responseCode = connection.getResponseCode();
+			//System.out.println("Response Code : " + responseCode);
+			String responseBody = "";
+			if (responseCode == 200) {
+	            InputStream content = (InputStream)connection.getInputStream();
+	            BufferedReader in = new BufferedReader(new InputStreamReader(content));
+				
+	            String line = null;
+	            while ((line = in.readLine()) != null) {
+	                System.out.println(line);
+	                responseBody = responseBody + line;
+	            }
+	            Object obj = JSONValue.parse(responseBody);
+	        	jsonObject = (JSONObject)obj;
+	        }
+			else {
+				setSessionVariable(request, "alertMessage", responseCode + " error!");
+			}
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //return dataspaceNames;
+		return jsonObject;
 	}
 	
 	public static JSONArray getResourcesMetadata(HttpServletRequest request, String sessionKey, String resourceUrl) {

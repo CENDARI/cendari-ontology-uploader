@@ -46,8 +46,6 @@ import org.json.simple.JSONObject;
 public enum FileUploadHandler {
 	INSTANCE;
 	
-	private static final String SAVE_DIR = "upload";
-	
 	public static FileUploadHandler getInstance() {
 		return INSTANCE;
 	}
@@ -126,6 +124,7 @@ public enum FileUploadHandler {
 	        for (FileItem item : items) {
 	        	if (!item.isFormField()) {
 	            	String filePath = request.getServletContext().getRealPath("/")+"/upload/";
+	            	filePath = Utility.tempUploadDirectory;
 	            	//filePath = "/test/";
 	            	
 	        		File directory = new File(filePath);

@@ -128,13 +128,13 @@
 		<div class="jumbotron">
   <h1>Welcome</h1>
   <br>
-  <p>This website is designed for uploading and viewing/downloading ontology and related files to and from Cendari CKAN server.</p>
+  <p>This website is designed for uploading and viewing/downloading ontology and related files to and from Cendari repository.</p>
   <br>
   <p>To create new data sets and upload files to new data sets, please <a href="uploaddatasetdescription.jsp">click here >></a></p>
   <br>
   <p>To view/download files and upload files to existing data sets, please <a href="listdataspaces.jsp">click here >></a></p>
   <br>
-  <p style="color:red">Note: Please make you are logged-in (If not, please click the "Login" on the top right corner of this page) before other operations. If the web pages keep showing "Login" after you logged in, please contact the administrator.</p>
+  <p style="color:red">Note: Please make sure you are logged-in (If not, please click the "Login" on the top right corner of this page) before other operations. If the web pages keep showing "Login" after you logged in, please contact the administrator.</p>
   
 </div>
 
